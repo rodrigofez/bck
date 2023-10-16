@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String
+  password   String
+  role       Role
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId Int?
+
+  @@index([employeeId])
+}
+
+enum Role {
+  HR_ESPECIALIST
+  Employee
+}
+
+model Employee {
+  id           Int           @id @default(autoincrement())
+  dui          String        @unique
+  firstName    String
+  lastName     String
+  position     String
+  startDate    DateTime
+  applications Application[]
+  User         User[]
+}
+
+model Application {
+  id                Int         @id @default(autoincrement())
+  employeeId        Int
+  employee          Employee    @relation(fields: [employeeId], references: [id])
+  startDate         DateTime
+  endDate           DateTime
+  doctorName        String
+  medicalUnit       MedicalUnit
+  medicalDiagnostic String
+  coverageDays      Int
+  createdAt         DateTime    @default(now())
+
+  @@index([employeeId])
+}
+
+enum MedicalUnit {
+  MINSAL
+  ISSS
+}
