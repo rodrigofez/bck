@@ -31,7 +31,7 @@ export class AuthService {
     });
 
     if (!user) {
-      return null;
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const passwordValid = password === user.password;
